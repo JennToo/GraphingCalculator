@@ -42,6 +42,7 @@ public class FunctionStore {
     public void rebuildStore() {
         functions = new HashMap<String, Function>();
 
+        // All the basic functions a calculator needs
         storeFunction("+", new AddFunction());
         storeFunction("-", new SubtractFunction());
         storeFunction("*", new MultiplyFunction());
@@ -79,6 +80,9 @@ public class FunctionStore {
         functions.put(id, f);
     }
 
+    /**
+     * Returns true if the given id corresponds to a stored function
+     */
     public boolean hasFunction(String id) {
         return functions.containsKey(id);
     }

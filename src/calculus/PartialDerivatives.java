@@ -25,6 +25,17 @@ import functions.FunctionArguments;
  * Implements 3 forms of (single) partial differentiation appoximations
  */
 public class PartialDerivatives {
+    /**
+     * Calculates the partial derivative using the forward difference formula
+     * 
+     * @param f
+     *            Function to take derivative of
+     * @param point
+     *            The point at which to take the derivative. Should have same
+     *            length as f.getArgCount()
+     * @param var
+     *            The index of the variable to take derivative with respect to.
+     */
     public static double forwardDifference(Function f, double[] point, int var,
             double step) {
         if (point.length != f.getArgCount())
@@ -37,6 +48,17 @@ public class PartialDerivatives {
         return (fxh - fx) / step;
     }
 
+    /**
+     * Calculates the partial derivative using the backward difference formula
+     * 
+     * @param f
+     *            Function to take derivative of
+     * @param point
+     *            The point at which to take the derivative. Should have same
+     *            length as f.getArgCount()
+     * @param var
+     *            The index of the variable to take derivative with respect to.
+     */
     public static double backwardDifference(Function f, double[] point,
             int var, double step) {
         if (point.length != f.getArgCount())
@@ -49,6 +71,17 @@ public class PartialDerivatives {
         return (fx - fxh) / step;
     }
 
+    /**
+     * Calculates the partial derivative using the centered difference formula
+     * 
+     * @param f
+     *            Function to take derivative of
+     * @param point
+     *            The point at which to take the derivative. Should have same
+     *            length as f.getArgCount()
+     * @param var
+     *            The index of the variable to take derivative with respect to.
+     */
     public static double centeredDifference(Function f, double[] point,
             int var, double step) {
         if (point.length != f.getArgCount())

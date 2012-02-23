@@ -20,6 +20,7 @@ package functions;
 
 import java.util.ArrayList;
 
+/** Test class for TokenizedFunctions */
 public class TokenizedFunctionTestDrive {
     public static void main(String[] args) {
         ArrayList<Token> tokens = new ArrayList<Token>();

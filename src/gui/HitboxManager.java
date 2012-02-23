@@ -21,33 +21,41 @@ package gui;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
+/**
+ * Stores, updates, and notifies Hitboxes and HitboxListener
+ */
 public class HitboxManager {
     private ArrayList<Hitbox> boxes;
+    /** The listener to call on hit */
     private HitboxListener listen;
-    
+
     public HitboxManager() {
         boxes = new ArrayList<Hitbox>();
     }
-    
+
+    /** Adds a box to the collection */
     public void createBox(Rectangle2D rect, String name) {
         boxes.add(new Hitbox(rect, name));
     }
-    
+
     public void clearBoxes() {
         boxes.clear();
     }
-    
+
     public void setListener(HitboxListener listen) {
         this.listen = listen;
     }
-    
+
+    /**
+     * Check all boxes for the point, and notify listen if needed
+     */
     public void checkBoxes(double x, double y) {
-        if(listen == null)
+        if (listen == null)
             return;
-        
-        for(int i = 0; i < boxes.size(); i++) {
+
+        for (int i = 0; i < boxes.size(); i++) {
             Hitbox cur = boxes.get(i);
-            if(cur.isHit(x, y)) {
+            if (cur.isHit(x, y)) {
                 listen.boxClick(cur.getName());
             }
         }

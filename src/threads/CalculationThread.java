@@ -18,7 +18,12 @@
  */
 package threads;
 
+/**
+ * Allows the iterative algorithms to run on a separate thread so that the GUI
+ * can remain responsive (and interactive) while the algorithm is running
+ */
 public abstract class CalculationThread extends Thread {
     public abstract boolean hasResults();
+
     public abstract String getResultsString();
 }

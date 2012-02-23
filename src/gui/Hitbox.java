@@ -20,19 +20,28 @@ package gui;
 
 import java.awt.geom.Rectangle2D;
 
+/**
+ * Represents a clickable area on a panel
+ */
 public class Hitbox {
+    /** Stores the geometry of the box */
     private Rectangle2D box;
+
+    /** The name of the box. Passed to the listener on click */
     private String name;
-    
+
     public Hitbox(Rectangle2D box, String name) {
         this.box = box;
         this.name = name;
     }
-    
+
+    /**
+     * Tests if the point is within the hitbox area
+     */
     public boolean isHit(double x, double y) {
         return box.contains(x, y);
     }
-    
+
     public String getName() {
         return name;
     }

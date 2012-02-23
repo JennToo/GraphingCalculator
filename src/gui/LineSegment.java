@@ -21,6 +21,9 @@ package gui;
 import java.awt.Color;
 import java.awt.Graphics;
 
+/**
+ * Behaves similar to Line, but only draws between p1 and p2
+ */
 public class LineSegment extends Line {
 
     public LineSegment(PointD p1, PointD p2, Color color) {

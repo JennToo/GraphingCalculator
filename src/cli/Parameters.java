@@ -20,6 +20,7 @@ package cli;
 
 import java.util.HashMap;
 
+/** Used to store CLI-algorithm parameters */
 public class Parameters {
     private static Parameters inst = new Parameters();
     

@@ -27,16 +27,32 @@ import functions.Function;
 import functions.FunctionArguments;
 
 public class PlotFunction {
-    public static Image plotFunction(Function f, GraphWindow window, int pixelStep, Color color) {
-        Image plot = new BufferedImage(window.pixWidth, window.pixHeight, BufferedImage.TYPE_INT_ARGB);
+    /**
+     * Creates a new Image of a function plot
+     * 
+     * @param f
+     *            The function to plot
+     * @param window
+     *            The constraints of the window (same size as the new image)
+     * @param pixelStep
+     *            The granularity of the drawing. Higher numbers look better,
+     *            but are more expensive (require more function evaluations)
+     * @param color
+     *            The color of the function plot
+     * @return An image with the function plotted
+     */
+    public static Image plotFunction(Function f, GraphWindow window,
+            int pixelStep, Color color) {
+        Image plot = new BufferedImage(window.pixWidth, window.pixHeight,
+                BufferedImage.TYPE_INT_ARGB);
         Graphics g = plot.getGraphics();
-        
+
         double[] arg = new double[1];
-        
+
         PointD prev = null;
         PointD cur = null;
         g.setColor(color);
-        for(int i = 0; i < window.pixWidth; i+=pixelStep) {
+        for (int i = 0; i < window.pixWidth; i += pixelStep) {
             double trueX = window.xLow + i * window.xScale;
             arg[0] = trueX;
             double trueY = 0.0;
@@ -45,27 +61,28 @@ public class PlotFunction {
             } catch (RuntimeException e) {
                 continue;
             }
-            if(Double.isNaN(trueY)) {
+            if (Double.isNaN(trueY)) {
                 continue;
             }
-            
+
             cur = new PointD(trueX, trueY);
             drawLine(prev, cur, g, window);
             prev = cur;
         }
-        
-        
+
         return plot;
     }
 
     private static void drawLine(PointD prev, PointD cur, Graphics g,
             GraphWindow window) {
-        if(prev == null)
+        if (prev == null)
             return;
         int x1 = (int) ((prev.x - window.xLow) / window.xScale);
-        int y1 = window.pixHeight - (int) ((prev.y - window.yLow) / window.yScale);
+        int y1 = window.pixHeight
+                - (int) ((prev.y - window.yLow) / window.yScale);
         int x2 = (int) ((cur.x - window.xLow) / window.xScale);
-        int y2 = window.pixHeight - (int) ((cur.y - window.yLow) / window.yScale);
+        int y2 = window.pixHeight
+                - (int) ((cur.y - window.yLow) / window.yScale);
         g.drawLine(x1, y1, x2, y2);
     }
 }

@@ -22,6 +22,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 
+/**
+ * Area for information to appear on the Graph
+ */
 public class NotificationArea {
     private Font font;
     private Color color;

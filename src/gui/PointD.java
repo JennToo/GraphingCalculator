@@ -18,6 +18,9 @@
  */
 package gui;
 
+/**
+ * Represents a point in 2-space
+ */
 public class PointD {
     public double x;
     public double y;

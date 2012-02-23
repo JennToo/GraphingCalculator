@@ -18,6 +18,9 @@
  */
 package gui;
 
+/**
+ * Performs actions on the graph based on hitbox names
+ */
 public class GraphToolbox implements HitboxListener {
     private Graph parent;
     

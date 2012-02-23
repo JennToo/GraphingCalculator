@@ -18,6 +18,10 @@
  */
 package functions;
 
+/**
+ * Thrown primarily by TokenizedFunctionFactory and TokenizedFunction to
+ * indicate the function could not be properly processed
+ */
 public class MalformedFunctionException extends RuntimeException {
     private static final long serialVersionUID = -8988390581541603265L;
 

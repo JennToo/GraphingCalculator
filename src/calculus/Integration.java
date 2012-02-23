@@ -22,17 +22,30 @@ import functions.Function;
 import functions.FunctionArguments;
 
 public class Integration {
+    /**
+     * Calculates the numerical integral of f over the range from a to b using
+     * Midpoint-Rectangle approximation
+     * 
+     * @param f
+     *            The function to integrate
+     * @param a
+     *            The lower limit of the interval
+     * @param b
+     *            The upper limit of the interval
+     * @param n
+     *            The number of rectangles to use
+     */
     public static double midpointRectangle(Function f, double a, double b, int n) {
         double sum = 0.0;
-        double h = (b-a)/n;
+        double h = (b - a) / n;
         double xn = a;
         double arg[] = new double[1];
-        while(xn <= b) {
-            arg[0] = xn + h/2;
+        while (xn <= b) {
+            arg[0] = xn + h / 2;
             sum += f.evaluate(new FunctionArguments(arg));
             xn += h;
         }
-        
+
         return sum * h;
     }
 }

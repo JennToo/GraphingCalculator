@@ -1,3 +1,6 @@
+/* Original class by Dr. Mark Boshart, Tennessee Technological University, mboshart@tntech.edu
+ * Used with permission.
+ */
 package gui;
 import java.awt.Graphics;
 

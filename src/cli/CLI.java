@@ -30,6 +30,8 @@ import functions.Function;
 import functions.FunctionStore;
 import functions.TokenizedFunctionFactory;
 
+//Unused. Superseded by CalculatorWindow
+/** A test class for roots */
 public class CLI {
     public static void main(String[] args) {
         String input = "";
@@ -71,14 +73,15 @@ public class CLI {
                         buildUp.toString(), vars);
 
                 if (parts[1].equals("bisection")) {
-                    rf = Bisection.zeroBisection(f, high, low, es, iterations, null);
+                    rf = Bisection.zeroBisection(f, high, low, es, iterations,
+                            null);
                 } else if (parts[1].equals("falseposition")) {
                     rf = FalsePosition.zeroFalsePosition(f, high, low, es,
                             iterations, null);
                 } else if (parts[1].equals("secant")) {
                     rf = Secant.zeroSecant(f, high, low, es, iterations, null);
                 }
-            } else if(parts[1].equals("modsecant")) {
+            } else if (parts[1].equals("modsecant")) {
                 double guess = Double.parseDouble(parts[2]);
                 ArrayList<String> vars = new ArrayList<String>();
                 vars.add(parts[3]);
@@ -88,8 +91,10 @@ public class CLI {
                 }
                 Function f = TokenizedFunctionFactory.createFunction(
                         buildUp.toString(), vars);
-                double step = Parameters.getParams().getParam("ModifiedSecantStep");
-                rf = ModifiedSecant.zeroModifiedSecant(f, guess, step, es, iterations, null);
+                double step = Parameters.getParams().getParam(
+                        "ModifiedSecantStep");
+                rf = ModifiedSecant.zeroModifiedSecant(f, guess, step, es,
+                        iterations, null);
             }
             if (rf.foundRoot()) {
                 System.out.println(rf);

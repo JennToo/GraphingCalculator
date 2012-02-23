@@ -1,3 +1,6 @@
+/* Original class by Dr. Mark Boshart, Tennessee Technological University, mboshart@tntech.edu
+ * Used with permission.
+ */
 package gui;
 
 import java.awt.Color;
@@ -74,7 +77,6 @@ public class DrawPanel extends JPanel implements MouseMotionListener,
     public void mouseDragged(MouseEvent event) {
     }
 
-    @Override
     public void mouseClicked(MouseEvent arg0) {
         if (!visible) {
             return;

@@ -18,6 +18,9 @@
  */
 package gui;
 
+/**
+ * Stores information about the Graph's viewport
+ */
 public class GraphWindow {
     public double xScale;
     public double yScale;
@@ -45,10 +48,16 @@ public class GraphWindow {
         this.yScale = (yHigh - yLow) / ((double) pixHeight);
     }
 
+    /**
+     * Converts x from window coordinates to absolute pixel coordinates
+     */
     public int windowToPixelX(double x) {
         return (int) ((x - xLow) / xScale);
     }
 
+    /**
+     * Converts y from window coordinates to absolute pixel coordinates
+     */
     public int windowToPixelY(double y) {
         return pixHeight - (int) ((y - yLow) / yScale);
     }

@@ -21,6 +21,10 @@ package functions;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/**
+ * Stores a complex (as in complicated) function as a list of Tokens, evaluated
+ * in RPN fasion
+ */
 public class TokenizedFunction implements Function {
     private int variables;
 

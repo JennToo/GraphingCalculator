@@ -22,6 +22,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 
+/**
+ * A point that appears on a Graph with a label
+ */
 public class LabeledPoint {
     private PointD point;
     private String label;
@@ -39,6 +42,7 @@ public class LabeledPoint {
         int x = (int) ((point.x - window.xLow) / window.xScale); 
         int y = window.pixHeight - (int)((point.y - window.yLow) / window.yScale);
         
+        // Diameter 4, hollow circle
         g.drawOval(x-2, y-2, 4, 4);
         int hOff = g.getFontMetrics(f).getHeight();
         int wOff = g.getFontMetrics(f).stringWidth(label);

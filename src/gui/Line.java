@@ -21,12 +21,18 @@ package gui;
 import java.awt.Color;
 import java.awt.Graphics;
 
+/**
+ * An infinite line that appears on a Graph
+ */
 public class Line {
     private double slope;
     private PointD p1;
     private PointD p2;
     private Color color;
 
+    /**
+     * p1 and p2 are points on the line. The slope is then computed from that 
+     */
     public Line(PointD p1, PointD p2, Color color) {
         this.p1 = p1;
         this.p2 = p2;

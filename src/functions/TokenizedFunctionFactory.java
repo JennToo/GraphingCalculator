@@ -180,7 +180,12 @@ public class TokenizedFunctionFactory {
         }
     }
 
-    // -1 left, +1 right
+    /**
+     * The associativity of an operator affects order of operations, and how
+     * terms are grouped
+     * 
+     * @return -1 for left, +1 for right
+     */
     private static int getAssociativity(String s) {
         if (s.equals("_") || s.equals("^")) {
             return 1;
@@ -197,7 +202,7 @@ public class TokenizedFunctionFactory {
     }
 
     /**
-     * Tokenizes an infix expression
+     * Tokenizes an infix expression into a list of Strings
      */
     private static ArrayList<String> breakupExpression(String expression) {
         ArrayList<String> parts = new ArrayList<String>();

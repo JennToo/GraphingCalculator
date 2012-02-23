@@ -18,6 +18,9 @@
  */
 package gui;
 
+/**
+ * Impelemented by a class that listens for hitbox hits
+ */
 public interface HitboxListener {
     public void boxClick(String name);
 }

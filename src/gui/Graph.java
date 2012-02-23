@@ -30,39 +30,74 @@ import javax.imageio.ImageIO;
 
 import functions.Function;
 
+/**
+ * Implements a fully-functional graphing window for plotting functions
+ */
 public class Graph implements Drawable {
+    /** Cached function plots valid for the current viewport */
     private ArrayList<Image> plots;
+
+    /** Stores functions that will need to be replotted if the window changes */
     private ArrayList<Function> functions;
+
+    /** Straight lines (segment or infinite) */
     private ArrayList<Line> lines;
+
+    /** The viewport of the graph */
     private GraphWindow window;
+
+    /** Fonts */
     private Font smallFont;
     private Font mediumFont;
+
+    /** Last known position of the mouse */
     private int mouseX, mouseY;
+
+    /** The toolbox */
     private Image tools;
+
+    /** Points with labels */
     private ArrayList<LabeledPoint> points;
+
+    /** Reference to the parent class, to schedule repaints */
     private DrawPanel owner;
+
+    /** Manage clickable areas on the graph */
     private HitboxManager hitboxes;
+
+    /** Are we in zoom-box-mode? */
     private boolean zoomBoxMode;
+
+    /** First corner of a zoom box */
     private PointD zBoxPoint;
+
+    /** Display text information on the graph */
     private NotificationArea notify;
 
     public Graph(DrawPanel owner) {
         smallFont = new Font("Monospaced", Font.PLAIN, 10);
         mediumFont = new Font("Monospaced", Font.PLAIN, 14);
+
         functions = new ArrayList<Function>();
+
         try {
-            tools = ImageIO.read(getClass().getClassLoader().getResource("tools.png"));
+            tools = ImageIO.read(getClass().getClassLoader().getResource(
+                    "tools.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         points = new ArrayList<LabeledPoint>();
         clearPlots();
+
         this.owner = owner;
-        
+
         lines = new ArrayList<Line>();
 
-        notify = new NotificationArea(new PointD(0,0), smallFont, new Color(25,110,32));
-        
+        notify = new NotificationArea(new PointD(0, 0), smallFont, new Color(
+                25, 110, 32));
+
+        // For the toolbox
         hitboxes = new HitboxManager();
         hitboxes.setListener(new GraphToolbox(this));
         hitboxes.createBox(new Rectangle(653, 0, 22, 21), "zoomIn");
@@ -74,39 +109,44 @@ public class Graph implements Drawable {
         hitboxes.createBox(new Rectangle(694, 43, 10, 10), "down");
     }
 
+    /**
+     * Sets the graph to a normal viewport
+     */
     public void setDefaultWindow() {
         GraphWindow window = new GraphWindow(-10.0, 10.0, -10.0, 10.0,
                 owner.getSize().width, owner.getSize().height);
         setWindow(window);
     }
-    
+
     public void clearLines() {
         lines.clear();
     }
-    
-    
+
     public void setNotification(String msg) {
         notify.setMessage(msg);
     }
-    
+
     public void addLine(Line line) {
         lines.add(line);
     }
-    
+
     private void drawLines(Graphics g) {
-        for(int i = 0; i < lines.size(); i++) {
+        for (int i = 0; i < lines.size(); i++) {
             lines.get(i).drawLine(g, window);
         }
     }
-    
+
     private void clearPlots() {
         plots = new ArrayList<Image>();
     }
 
+    /**
+     * Force the parent to repaint as soon as possible
+     */
     public void scheduleRepaint() {
         owner.scheduleRepaint();
     }
-    
+
     public void addPlot(Function f, Color color) {
         functions.add(f);
         plots.add(PlotFunction.plotFunction(f, window, 8, Color.BLACK));
@@ -125,6 +165,9 @@ public class Graph implements Drawable {
         }
     }
 
+    /**
+     * Moves the viewport to the given window
+     */
     public void setWindow(GraphWindow newWindow) {
         clearPlots();
         window = newWindow;
@@ -148,7 +191,7 @@ public class Graph implements Drawable {
         drawCursor(g);
         drawLines(g);
         drawPoints(g);
-    
+
         notify.draw(g);
 
         if (zoomBoxMode && zBoxPoint != null) {
@@ -245,6 +288,9 @@ public class Graph implements Drawable {
         }
     }
 
+    /**
+     * Clicks will go to creating a zoom-box instead of hitboxes
+     */
     public void setZoomBoxMode() {
         zoomBoxMode = true;
     }
@@ -253,11 +299,6 @@ public class Graph implements Drawable {
         mouseX = x;
         mouseY = y;
     }
-
-    /*public void resetWindow(GraphWindow newWin) {
-        window = newWin;
-        replotAll();
-    }*/
 
     public void mouseClicked(int x, int y, int button) {
         if (button == 1) {
@@ -282,6 +323,10 @@ public class Graph implements Drawable {
         }
     }
 
+    /**
+     * Zoom the window by the given factor. 0 < factor < 1 to zoom in. 1 <
+     * factor to zoom out.
+     */
     public void zoom(double factor) {
         window.xHigh *= factor;
         window.xLow *= factor;
@@ -291,6 +336,10 @@ public class Graph implements Drawable {
         setWindow(window);
     }
 
+    /**
+     * Move the window by x and y. Note x and y are scaled to create the same
+     * pixel movement regardless of viewport scale
+     */
     public void translate(double x, double y) {
         window.xHigh += x * window.xScale;
         window.xLow += x * window.xScale;
@@ -300,6 +349,9 @@ public class Graph implements Drawable {
         setWindow(window);
     }
 
+    /**
+     * Moves the window to the rectangle given by p1 and p2
+     */
     public void rebox(PointD p1, PointD p2) {
         if (p1.x > p2.x) {
             window.xHigh = p1.x;

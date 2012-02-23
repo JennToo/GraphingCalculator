@@ -34,6 +34,7 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 import javax.swing.JScrollPane;
 
@@ -48,11 +49,12 @@ import threads.SecantThread;
 
 import functions.Function;
 import functions.FunctionArguments;
+import functions.FunctionStore;
 import functions.MalformedFunctionException;
 import functions.TokenizedFunctionFactory;
 
 public class CalculatorWindow {
-
+    /** GUI Elements */
     private JFrame frame;
     private JTextField expressionBox;
     private JTextField input2Box;
@@ -65,17 +67,22 @@ public class CalculatorWindow {
     private JLabel input2Label;
     private JLabel input3Label;
     private JLabel input4Label;
-
-    private CalculatorWindowListener listen;
     private DrawPanel drawP;
-    private Graph graph;
     private JButton btnEvaluate;
     private JButton btnClearConsole;
     private JButton btnOptions;
     private JPanel graphPanel;
     private JTabbedPane tabbedPane;
-    private CalculationThread otherThread;
     private JButton btnContinue;
+
+    /** Action listener */
+    private CalculatorWindowListener listen;
+
+    /** The graph */
+    private Graph graph;
+
+    /** Separate thread for iterative calculations */
+    private CalculationThread otherThread;
 
     /**
      * Launch the application.
@@ -207,7 +214,11 @@ public class CalculatorWindow {
         myInitialize();
     }
 
+    /**
+     * Init my components
+     */
     private void myInitialize() {
+        frame.setTitle("Graphing Calculator");
         drawP = new DrawPanel();
         graph = new Graph(drawP);
         drawP.add(graph);
@@ -224,6 +235,9 @@ public class CalculatorWindow {
         displayOutput("Initialized\n");
     }
 
+    /**
+     * Sets the action commands for the GUI components
+     */
     private void attachListener() {
         listen = new CalculatorWindowListener();
 
@@ -297,6 +311,7 @@ public class CalculatorWindow {
     }
 
     private class CalculatorWindowListener implements ActionListener {
+        /** What action state are we in */
         private String state;
 
         public CalculatorWindowListener() {
@@ -304,6 +319,9 @@ public class CalculatorWindow {
         }
 
         @SuppressWarnings("deprecation")
+        /**
+         * Perform command
+         */
         public void actionPerformed(ActionEvent arg0) {
             String cmd = arg0.getActionCommand();
             if (cmd.equals("CONTINUE")) {
@@ -314,7 +332,6 @@ public class CalculatorWindow {
                         finishZerosRun();
                     }
                 }
-
             } else if (cmd.equals("EVALUATE")) {
                 if (state.equals("Zero")) {
                     evalZeroState();
@@ -367,7 +384,7 @@ public class CalculatorWindow {
                             Double.parseDouble(input3Box.getText()),
                             Double.parseDouble(input4Box.getText()), 200);
                 }
-                
+
                 displayOutput("Integral: " + val + "\n");
             } catch (MalformedFunctionException e) {
                 displayOutput("Malformed expression: " + e.getMessage() + "\n");
@@ -403,8 +420,32 @@ public class CalculatorWindow {
         }
 
         private void evalDefState() {
-            // TODO Auto-generated method stub
+            try {
+                ArrayList<String> vars = new ArrayList<String>();
+                String type = (String) input1Box.getSelectedItem();
+                if (type.equals("Single")) {
+                    vars.add(input3Box.getText().trim());
+                } else if (type.equals("Multiple")) {
+                    StringTokenizer tok = new StringTokenizer(input3Box
+                            .getText().trim(), ",", false);
+                    while (tok.hasMoreTokens()) {
+                        vars.add(tok.nextToken());
+                    }
+                }
 
+                String name = input2Box.getText().trim();
+                if (name.length() == 0
+                        || FunctionStore.getStore().hasFunction(name)) {
+                    displayOutput("Invalid Function name.");
+                }
+                FunctionStore.getStore().storeFunction(
+                        name,
+                        TokenizedFunctionFactory.createFunction(
+                                expressionBox.getText(), vars));
+                displayOutput("Function " + name + " stored with definition " + expressionBox.getText() + "\n");
+            } catch (MalformedFunctionException e) {
+                displayOutput("Malformed expression: " + e.getMessage() + "\n");
+            }
         }
 
         private void enterIntegralState() {
@@ -586,7 +627,7 @@ public class CalculatorWindow {
             input3Label.setText("Var(s):");
             input3Label.setVisible(true);
             input3Box.setVisible(true);
-            state = "DefFunction";
+            state = "Def. Function";
         }
 
         private void enterZeroState() {

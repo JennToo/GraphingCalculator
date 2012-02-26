@@ -19,29 +19,29 @@
 package roots;
 
 import java.awt.Color;
+
 import functions.Function;
 import functions.FunctionArguments;
 import gui.Graph;
 import gui.LabeledPoint;
 import gui.Line;
+import gui.LineSegment;
 import gui.PointD;
 
-public class Bisection {
+public class ModifiedFalsePosition {
     /**
-     * Implements the standard bisection algorithm for a function of a single
-     * variable.
+     * Implements the standard false-position root finding algorithm
      */
     @SuppressWarnings("deprecation")
-    public static RootFindResults zeroBisection(Function f, double high,
+    public static RootFindResults zeroModifiedFalsePosition(Function f, double high,
             double low, double stop, int max, Graph g) {
+        int oMax = max;
+        double[] arg = new double[1];
 
         if (g != null) {
             g.clearFunctions();
             g.addPlot(f, Color.BLACK);
         }
-
-        int oMax = max;
-        double[] arg = new double[1];
 
         arg[0] = high;
         double fh = f.evaluate(new FunctionArguments(arg));
@@ -55,8 +55,11 @@ public class Bisection {
         double es = stop * 1.1;
         double xr = Double.NaN;
         double fxr = 0.0;
+        
+        // Keeps the sides balanced
+        int balance = 0;
         while (max > 0 && es > stop) {
-            xr = (high + low) / 2;
+            xr = high - (fh * (low - high)) / (fl - fh);
             arg[0] = xr;
             fxr = f.evaluate(new FunctionArguments(arg));
 
@@ -64,22 +67,18 @@ public class Bisection {
                 g.clearPoints();
                 g.clearLines();
 
-                g.setNotification("Xl: " + (float) low + "\nf(Xl): "
-                        + (float) fl + "\nXh: " + (float) high + "\nf(Xh): "
-                        + (float) fh + "\nXr: " + (float) xr + "\nf(Xr): "
-                        + (float) fxr);
-
                 PointD pLow = new PointD(low, fl);
                 PointD pHigh = new PointD(high, fh);
                 PointD pXr = new PointD(xr, fxr);
-
+                PointD Xr = new PointD(xr, 0);
+                
                 g.addPoint(new LabeledPoint(pLow, "(Xl, f(Xl))", Color.BLUE));
                 g.addPoint(new LabeledPoint(pHigh, "(Xh, f(Xh))", Color.BLUE));
                 g.addPoint(new LabeledPoint(pXr, "(Xr, f(Xr))", Color.ORANGE));
 
-                g.addLine(new Line(pLow, pLow, Color.BLUE));
-                g.addLine(new Line(pHigh, pHigh, Color.BLUE));
-                g.addLine(new Line(pXr, pXr, Color.ORANGE));
+                
+                g.addLine(new LineSegment(pXr, Xr, Color.ORANGE));
+                g.addLine(new Line(pLow, pHigh, Color.BLUE));
                 g.scheduleRepaint();
                 Thread.currentThread().suspend();
             }
@@ -88,24 +87,35 @@ public class Bisection {
                 if (fh > 0) {
                     high = xr;
                     fh = fxr;
+                    balance++;
                 } else {
                     low = xr;
                     fl = fxr;
+                    balance--;
                 }
             } else {
                 if (fh < 0) {
                     high = xr;
                     fh = fxr;
+                    balance++;
                 } else {
                     low = xr;
                     fl = fxr;
+                    balance--;
                 }
             }
-            es = Math.abs((prev - xr) / (xr));
-            //es = Math.abs((high - low) / (high + low));
+            
+            if(balance >= 2) {
+                fl = fl / 2.0;
+                balance = 0;
+            } else if(balance <= -2) {
+                fh = fh / 2.0;
+                balance = 0;
+            }
+            
+            es = Math.abs((prev - xr) / xr);
             prev = xr;
             max--;
-
         }
 
         return new RootFindResults(xr, oMax - max, es, fxr, true);

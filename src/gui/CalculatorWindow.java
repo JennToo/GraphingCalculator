@@ -44,6 +44,7 @@ import calculus.Integration;
 import threads.BisectionThread;
 import threads.CalculationThread;
 import threads.FalsePositionThread;
+import threads.ModifiedFalsePositionThread;
 import threads.ModifiedSecantThread;
 import threads.SecantThread;
 
@@ -299,7 +300,7 @@ public class CalculatorWindow {
         input4Label.setText("");
         input4Label.setToolTipText("");
 
-        expressionBox.setText("");
+        //expressionBox.setText("");
     }
 
     private void clearOutput() {
@@ -372,7 +373,8 @@ public class CalculatorWindow {
 
         private void evalIntegralState() {
             try {
-                ArrayList<String> vars = new ArrayList<String>();
+                ArrayList<String> vars = new ArrayList<String>();           
+                
                 vars.add(input2Box.getText().trim());
                 Function f = TokenizedFunctionFactory.createFunction(
                         expressionBox.getText(), vars);
@@ -573,7 +575,13 @@ public class CalculatorWindow {
                         t = new ModifiedSecantThread(f,
                                 Double.parseDouble(input2Box.getText()), 0.001,
                                 0.001, 100, graph);
+                    } else if(method.equals("Modified F.P.")) {
+                        t = new ModifiedFalsePositionThread(f,
+                                Double.parseDouble(input3Box.getText()),
+                                Double.parseDouble(input2Box.getText()), 0.001,
+                                100, graph);
                     }
+                    displayOutput("Method: " + method + "\n");
                 } catch (NumberFormatException e) {
                     displayOutput("You must enter valid constraints\n");
                     return;
@@ -636,6 +644,7 @@ public class CalculatorWindow {
 
             input1Box.addItem("Bisection");
             input1Box.addItem("False Position");
+            input1Box.addItem("Modified F.P.");
             input1Box.addItem("Secant");
             input1Box.addItem("Modified Secant");
             input1Box.setVisible(true);

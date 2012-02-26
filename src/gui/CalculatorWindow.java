@@ -373,6 +373,7 @@ public class CalculatorWindow {
 
         private void evalIntegralState() {
             try {
+                graph.setDefaultWindow();
                 ArrayList<String> vars = new ArrayList<String>();           
                 
                 vars.add(input2Box.getText().trim());
@@ -384,7 +385,11 @@ public class CalculatorWindow {
                 if (meth.equals("Midpoint")) {
                     val = Integration.midpointRectangle(f,
                             Double.parseDouble(input3Box.getText()),
-                            Double.parseDouble(input4Box.getText()), 200);
+                            Double.parseDouble(input4Box.getText()), 20, graph);
+                } else if(meth.equals("Trapezoid")) {
+                    val = Integration.trapezoidRule(f,
+                            Double.parseDouble(input3Box.getText()),
+                            Double.parseDouble(input4Box.getText()), 20, graph);
                 }
 
                 displayOutput("Integral: " + val + "\n");
@@ -456,6 +461,7 @@ public class CalculatorWindow {
 
             input1Box.setVisible(true);
             input1Box.addItem("Midpoint");
+            input1Box.addItem("Trapezoid");
             input1Label.setVisible(true);
             input1Label.setText("Meth.:");
 

@@ -36,7 +36,7 @@ public class Secant {
     public static RootFindResults zeroSecant(Function f, double p2, double p1,
             double stop, int max, Graph g) {
         if (g != null) {
-            g.clearFunctions();
+            g.clearAll();
             g.addPlot(f, Color.BLACK);
         }
         

@@ -36,7 +36,7 @@ public class Bisection {
             double low, double stop, int max, Graph g) {
 
         if (g != null) {
-            g.clearFunctions();
+            g.clearAll();
             g.addPlot(f, Color.BLACK);
         }
 

@@ -69,6 +69,9 @@ public class PlotFunction {
             drawLine(prev, cur, g, window);
             prev = cur;
         }
+        
+        arg[0] = window.xLow + window.pixWidth * window.xScale;
+        drawLine(cur, new PointD(arg[0], f.evaluate(new FunctionArguments(arg))), g, window);
 
         return plot;
     }

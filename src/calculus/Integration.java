@@ -18,8 +18,16 @@
  */
 package calculus;
 
+import java.awt.Color;
+import java.util.ArrayList;
+
 import functions.Function;
 import functions.FunctionArguments;
+import gui.Graph;
+import gui.LabeledPoint;
+import gui.PointD;
+import gui.QuadShape;
+import gui.RectangleShape;
 
 public class Integration {
     /**
@@ -34,18 +42,73 @@ public class Integration {
      *            The upper limit of the interval
      * @param n
      *            The number of rectangles to use
+     * @param g
+     *            The Graph object to draw on. Send null if no graphing is
+     *            needed
      */
-    public static double midpointRectangle(Function f, double a, double b, int n) {
+    public static double midpointRectangle(Function f, double a, double b,
+            int n, Graph g) {
+        if (g != null) {
+            g.clearAll();
+            g.addPlot(f, Color.BLACK);
+        }
+
         double sum = 0.0;
         double h = (b - a) / n;
         double xn = a;
         double arg[] = new double[1];
         while (xn <= b) {
             arg[0] = xn + h / 2;
-            sum += f.evaluate(new FunctionArguments(arg));
+            double eval = f.evaluate(new FunctionArguments(arg));
+
+            if (g != null) {
+                g.addPoint(new LabeledPoint(new PointD(xn + h / 2, eval), "",
+                        Color.BLUE));
+                g.addShape(new RectangleShape(new PointD(xn, 0), new PointD(xn
+                        + h, eval), Color.BLUE));
+            }
+
+            sum += eval;
             xn += h;
         }
 
         return sum * h;
+    }
+
+    public static double trapezoidRule(Function f, double a, double b,
+            double n, Graph g) {
+        if (g != null) {
+            g.clearAll();
+            g.addPlot(f, Color.BLACK);
+        }
+
+        double sum = 0.0;
+        double h = (b - a) / n;
+        double arg[] = new double[1];
+        double xn = a;
+        ArrayList<Double> xs = new ArrayList<Double>();
+        ArrayList<Double> ys = new ArrayList<Double>();
+        while (xn <= b) {
+            xs.add(xn);
+            arg[0] = xn;
+            ys.add(f.evaluate(new FunctionArguments(arg)));
+            xn += h;
+        }
+
+        if (g != null) {
+            for (int i = 0; i < xs.size() - 1; i++) {
+                PointD p1 = new PointD(xs.get(i), ys.get(i));
+                PointD p2 = new PointD(xs.get(i+1), ys.get(i+1));
+                PointD p3 = new PointD(xs.get(i+1), 0);
+                PointD p4 = new PointD(xs.get(i), 0);
+                g.addShape(new QuadShape(Color.BLUE, p1, p2, p3, p4));
+            }
+        }
+        
+        for(int i = 1; i < xs.size(); i++) {
+            sum += (xs.get(i) - xs.get(i-1)) * (ys.get(i) + ys.get(i-1));
+        }
+
+        return 0.5 * sum;
     }
 }

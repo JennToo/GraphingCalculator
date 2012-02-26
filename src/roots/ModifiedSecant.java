@@ -37,7 +37,7 @@ public class ModifiedSecant {
             double step, double stop, int max, Graph g) {
         // Plot the function
         if (g != null) {
-            g.clearFunctions();
+            g.clearAll();
             g.setDefaultWindow();
             g.addPlot(f, Color.BLACK);
         }

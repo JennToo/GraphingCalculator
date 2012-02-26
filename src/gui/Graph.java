@@ -42,6 +42,9 @@ public class Graph implements Drawable {
 
     /** Straight lines (segment or infinite) */
     private ArrayList<Line> lines;
+    
+    /** Shapes (for integration) */
+    private ArrayList<Shape> shapes;
 
     /** The viewport of the graph */
     private GraphWindow window;
@@ -88,6 +91,7 @@ public class Graph implements Drawable {
         }
 
         points = new ArrayList<LabeledPoint>();
+        shapes = new ArrayList<Shape>();
         clearPlots();
 
         this.owner = owner;
@@ -107,6 +111,8 @@ public class Graph implements Drawable {
         hitboxes.createBox(new Rectangle(705, 32, 10, 10), "right");
         hitboxes.createBox(new Rectangle(694, 21, 10, 10), "up");
         hitboxes.createBox(new Rectangle(694, 43, 10, 10), "down");
+        
+        
     }
 
     /**
@@ -118,6 +124,14 @@ public class Graph implements Drawable {
         setWindow(window);
     }
 
+    public void clearAll() {
+        clearLines();
+        clearShapes();
+        clearFunctions();
+        clearPoints();
+        setNotification("");
+    }
+    
     public void clearLines() {
         lines.clear();
     }
@@ -136,6 +150,20 @@ public class Graph implements Drawable {
         }
     }
 
+    public void addShape(Shape shape) {
+        shapes.add(shape);
+    }
+    
+    public void clearShapes() {
+        shapes.clear();
+    }
+    
+    private void drawShapes(Graphics g) {
+        for(int i = 0; i < shapes.size(); i++) {
+            shapes.get(i).draw(g, window);
+        }
+    }
+    
     private void clearPlots() {
         plots = new ArrayList<Image>();
     }
@@ -160,7 +188,7 @@ public class Graph implements Drawable {
     private void replotAll() {
         clearPlots();
         for (int i = 0; i < functions.size(); i++) {
-            plots.add(PlotFunction.plotFunction(functions.get(i), window, 8,
+            plots.add(PlotFunction.plotFunction(functions.get(i), window, 12,
                     Color.BLACK));
         }
     }
@@ -190,6 +218,7 @@ public class Graph implements Drawable {
         drawTools(g);
         drawCursor(g);
         drawLines(g);
+        drawShapes(g);
         drawPoints(g);
 
         notify.draw(g);

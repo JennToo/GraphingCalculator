@@ -39,7 +39,7 @@ public class FalsePosition {
         double[] arg = new double[1];
 
         if (g != null) {
-            g.clearFunctions();
+            g.clearAll();
             g.addPlot(f, Color.BLACK);
         }
 

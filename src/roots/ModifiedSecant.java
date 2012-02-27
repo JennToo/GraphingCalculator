@@ -38,7 +38,7 @@ public class ModifiedSecant {
         // Plot the function
         if (g != null) {
             g.clearAll();
-            g.setDefaultWindow();
+            g.defaultWindow();
             g.addPlot(f, Color.BLACK);
         }
 

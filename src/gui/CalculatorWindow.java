@@ -75,6 +75,7 @@ public class CalculatorWindow {
     private JPanel graphPanel;
     private JTabbedPane tabbedPane;
     private JButton btnContinue;
+    private Options optionFrame;
 
     /** Action listener */
     private CalculatorWindowListener listen;
@@ -219,6 +220,8 @@ public class CalculatorWindow {
      * Init my components
      */
     private void myInitialize() {
+        optionFrame = new Options(this);
+
         frame.setTitle("Graphing Calculator");
         drawP = new DrawPanel();
         graph = new Graph(drawP);
@@ -234,6 +237,8 @@ public class CalculatorWindow {
         attachListener();
         clearOutput();
         displayOutput("Initialized\n");
+        graph.setDefaultWindow(new GraphWindow(-10.0, 10.0, -10.0, 10.0, drawP
+                .getSize().width, drawP.getSize().height));
     }
 
     /**
@@ -254,6 +259,9 @@ public class CalculatorWindow {
         btnContinue.setActionCommand("CONTINUE");
         btnContinue.addActionListener(listen);
         btnContinue.setEnabled(false);
+
+        btnOptions.setActionCommand("OPTIONS");
+        btnOptions.addActionListener(listen);
 
         input1Box.setActionCommand("INPUT1");
         input1Box.addActionListener(listen);
@@ -300,7 +308,7 @@ public class CalculatorWindow {
         input4Label.setText("");
         input4Label.setToolTipText("");
 
-        //expressionBox.setText("");
+        // expressionBox.setText("");
     }
 
     private void clearOutput() {
@@ -309,6 +317,17 @@ public class CalculatorWindow {
 
     public void displayOutput(String output) {
         textOutput.append(output);
+    }
+
+    public void updateOptions() {
+        graph.setPlotResolution((int) optionFrame.getParam("PlotResolution"));
+        GraphWindow gw = new GraphWindow(optionFrame.getParam("Xmin"),
+                optionFrame.getParam("Xmax"), optionFrame.getParam("Ymin"),
+                optionFrame.getParam("Ymax"), drawP.getWidth(),
+                drawP.getHeight());
+        graph.setDefaultWindow(gw);
+        graph.scheduleRepaint();
+
     }
 
     private class CalculatorWindowListener implements ActionListener {
@@ -368,14 +387,16 @@ public class CalculatorWindow {
                 if (state.equals("Zero")) {
                     reprocessZeroState();
                 }
+            } else if (cmd.equals("OPTIONS")) {
+                optionFrame.setVisible(true);
             }
         }
 
         private void evalIntegralState() {
             try {
-                graph.setDefaultWindow();
-                ArrayList<String> vars = new ArrayList<String>();           
-                
+                graph.defaultWindow();
+                ArrayList<String> vars = new ArrayList<String>();
+
                 vars.add(input2Box.getText().trim());
                 Function f = TokenizedFunctionFactory.createFunction(
                         expressionBox.getText(), vars);
@@ -386,10 +407,18 @@ public class CalculatorWindow {
                     val = Integration.midpointRectangle(f,
                             Double.parseDouble(input3Box.getText()),
                             Double.parseDouble(input4Box.getText()), 20, graph);
-                } else if(meth.equals("Trapezoid")) {
+                } else if (meth.equals("Trapezoid")) {
                     val = Integration.trapezoidRule(f,
                             Double.parseDouble(input3Box.getText()),
                             Double.parseDouble(input4Box.getText()), 20, graph);
+                } else if (meth.equals("Romberg")) {
+                    val = Integration.rombergsRule(f,
+                            Double.parseDouble(input3Box.getText()),
+                            Double.parseDouble(input4Box.getText()), 5);
+                } else if (meth.equals("Simpson")) {
+                    val = Integration.simpsonsRule(f,
+                            Double.parseDouble(input3Box.getText()),
+                            Double.parseDouble(input4Box.getText()), 20);
                 }
 
                 displayOutput("Integral: " + val + "\n");
@@ -449,7 +478,8 @@ public class CalculatorWindow {
                         name,
                         TokenizedFunctionFactory.createFunction(
                                 expressionBox.getText(), vars));
-                displayOutput("Function " + name + " stored with definition " + expressionBox.getText() + "\n");
+                displayOutput("Function " + name + " stored with definition "
+                        + expressionBox.getText() + "\n");
             } catch (MalformedFunctionException e) {
                 displayOutput("Malformed expression: " + e.getMessage() + "\n");
             }
@@ -462,6 +492,8 @@ public class CalculatorWindow {
             input1Box.setVisible(true);
             input1Box.addItem("Midpoint");
             input1Box.addItem("Trapezoid");
+            input1Box.addItem("Simpson");
+            input1Box.addItem("Romberg");
             input1Label.setVisible(true);
             input1Label.setText("Meth.:");
 
@@ -517,7 +549,7 @@ public class CalculatorWindow {
         }
 
         private void evalGraphState() {
-            graph.setDefaultWindow();
+            graph.defaultWindow();
             graph.clearFunctions();
             graph.clearLines();
             graph.clearPoints();
@@ -551,7 +583,7 @@ public class CalculatorWindow {
         @SuppressWarnings("deprecation")
         private void evalZeroState() {
             if (otherThread == null) {
-                graph.setDefaultWindow();
+                graph.defaultWindow();
 
                 graph.setNotification("");
 
@@ -581,7 +613,7 @@ public class CalculatorWindow {
                         t = new ModifiedSecantThread(f,
                                 Double.parseDouble(input2Box.getText()), 0.001,
                                 0.001, 100, graph);
-                    } else if(method.equals("Modified F.P.")) {
+                    } else if (method.equals("Modified F.P.")) {
                         t = new ModifiedFalsePositionThread(f,
                                 Double.parseDouble(input3Box.getText()),
                                 Double.parseDouble(input2Box.getText()), 0.001,

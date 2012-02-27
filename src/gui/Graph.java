@@ -76,8 +76,15 @@ public class Graph implements Drawable {
 
     /** Display text information on the graph */
     private NotificationArea notify;
-
+    
+    /** How clear the plots will be. Smaller is clearer */
+    private int plotResolution;
+    
+    /** Default window size */
+    private GraphWindow defaultWindow;
+    
     public Graph(DrawPanel owner) {
+        plotResolution = 8;
         smallFont = new Font("Monospaced", Font.PLAIN, 10);
         mediumFont = new Font("Monospaced", Font.PLAIN, 14);
 
@@ -111,17 +118,22 @@ public class Graph implements Drawable {
         hitboxes.createBox(new Rectangle(705, 32, 10, 10), "right");
         hitboxes.createBox(new Rectangle(694, 21, 10, 10), "up");
         hitboxes.createBox(new Rectangle(694, 43, 10, 10), "down");
-        
-        
     }
 
     /**
      * Sets the graph to a normal viewport
      */
-    public void setDefaultWindow() {
-        GraphWindow window = new GraphWindow(-10.0, 10.0, -10.0, 10.0,
-                owner.getSize().width, owner.getSize().height);
-        setWindow(window);
+    public void setDefaultWindow(GraphWindow wind) {
+        defaultWindow = wind;
+    }
+    
+    public void defaultWindow() {
+        setWindow(defaultWindow);
+    }
+    
+    public void setPlotResolution(int newish) {
+        plotResolution = newish;
+        replotAll();
     }
 
     public void clearAll() {
@@ -188,7 +200,7 @@ public class Graph implements Drawable {
     private void replotAll() {
         clearPlots();
         for (int i = 0; i < functions.size(); i++) {
-            plots.add(PlotFunction.plotFunction(functions.get(i), window, 12,
+            plots.add(PlotFunction.plotFunction(functions.get(i), window, plotResolution,
                     Color.BLACK));
         }
     }

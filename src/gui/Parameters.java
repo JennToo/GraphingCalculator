@@ -16,21 +16,31 @@
  * You should have received a copy of the GNU General Public License
  * along with GraphingCalculator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package cli;
+package gui;
 
 import java.util.HashMap;
 
 /** Used to store CLI-algorithm parameters */
 public class Parameters {
-    private static Parameters inst = new Parameters();
-    
     private HashMap<String, Double> params;
     
-    private Parameters() {
+    public Parameters() {
         params = new HashMap<String, Double>();
-        params.put("ModifiedSecantStep", 0.01);
+        defaults();
+    }
+    
+    public void defaults() {
+        params.put("ModifiedSecantStep", 0.0001);
         params.put("MaxIterations", 100.0);
         params.put("StoppingThreshold", 0.00001);
+        params.put("PlotResolution", 12.0);
+        params.put("Xmin", -10.0);
+        params.put("Xmax", 10.0);
+        params.put("Ymin", -10.0);
+        params.put("Ymax", 10.0);
+        params.put("DerivStep", 0.0001);
+        params.put("Division", 20.0);
+        params.put("Romberg", 5.0);
     }
     
     public double getParam(String id) {
@@ -44,9 +54,4 @@ public class Parameters {
     public void setParam(String id, double value) {
         params.put(id, value);
     }
-    
-    public static Parameters getParams() {
-        return inst;
-    }
-    
 }

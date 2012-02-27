@@ -43,6 +43,8 @@ public class GraphToolbox implements HitboxListener {
             parent.translate(0.0, -7.0);
         } else if(name.equals("zoomBox")) {
             parent.setZoomBoxMode();
+        } else if(name.equals("zoomReset")) {
+            parent.defaultWindow();
         }
     }
 

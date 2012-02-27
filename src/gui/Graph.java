@@ -119,6 +119,7 @@ public class Graph extends JPanel implements MouseListener,
         hitboxes.setListener(new GraphToolbox(this));
         hitboxes.createBox(new Rectangle(653, 0, 22, 21), "zoomIn");
         hitboxes.createBox(new Rectangle(676, 0, 697 - 676, 21), "zoomOut");
+        hitboxes.createBox(new Rectangle(653, 22, 22, 21), "zoomReset");
         hitboxes.createBox(new Rectangle(698, 0, 20, 21), "zoomBox");
         hitboxes.createBox(new Rectangle(683, 32, 10, 10), "left");
         hitboxes.createBox(new Rectangle(705, 32, 10, 10), "right");
@@ -139,7 +140,7 @@ public class Graph extends JPanel implements MouseListener,
     }
 
     public void defaultWindow() {
-        setWindow(defaultWindow);
+        setWindow(defaultWindow.clone());
     }
 
     public void setPlotResolution(int newish) {

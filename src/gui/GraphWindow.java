@@ -61,4 +61,8 @@ public class GraphWindow {
     public int windowToPixelY(double y) {
         return pixHeight - (int) ((y - yLow) / yScale);
     }
+    
+    public GraphWindow clone() {
+        return new GraphWindow(xLow, xHigh, yLow, yHigh, pixWidth, pixHeight);
+    }
 }

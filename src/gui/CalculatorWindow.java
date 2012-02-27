@@ -96,6 +96,7 @@ public class CalculatorWindow {
                     window.frame.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    System.out.println("Crashed");
                 }
             }
         });
@@ -473,12 +474,17 @@ public class CalculatorWindow {
                     while (tok.hasMoreTokens()) {
                         vars.add(tok.nextToken());
                     }
+                    if(vars.size() < 2) {
+                        displayOutput("Invalid variable list " + input3Box.getText() + "\n");
+                        return;
+                    }
                 }
 
                 String name = input2Box.getText().trim();
                 if (name.length() == 0
                         || FunctionStore.getStore().hasFunction(name)) {
                     displayOutput("Invalid Function name.");
+                    return;
                 }
                 FunctionStore.getStore().storeFunction(
                         name,

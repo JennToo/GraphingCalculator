@@ -56,7 +56,11 @@ public class TokenizedFunctionFactory {
             String current = parts.get(i).trim();
 
             if (isNumber(current)) {
+                try {
                 tokens.add(new ConstantToken(Double.parseDouble(current)));
+                } catch (NumberFormatException e) {
+                    throw new MalformedFunctionException("Unknown token " + current + "\n");
+                }
             } else if (!isOperator(current)
                     && FunctionStore.getStore().hasFunction(current)) {
                 stack.add(current);

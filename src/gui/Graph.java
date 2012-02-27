@@ -23,17 +23,27 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import functions.Function;
 
 /**
  * Implements a fully-functional graphing window for plotting functions
  */
-public class Graph implements Drawable {
+public class Graph extends JPanel implements MouseListener,
+        MouseMotionListener, ActionListener {
+    private static final long serialVersionUID = -1661530749016007205L;
+
     /** Cached function plots valid for the current viewport */
     private ArrayList<Image> plots;
 
@@ -42,7 +52,7 @@ public class Graph implements Drawable {
 
     /** Straight lines (segment or infinite) */
     private ArrayList<Line> lines;
-    
+
     /** Shapes (for integration) */
     private ArrayList<Shape> shapes;
 
@@ -62,9 +72,6 @@ public class Graph implements Drawable {
     /** Points with labels */
     private ArrayList<LabeledPoint> points;
 
-    /** Reference to the parent class, to schedule repaints */
-    private DrawPanel owner;
-
     /** Manage clickable areas on the graph */
     private HitboxManager hitboxes;
 
@@ -76,14 +83,15 @@ public class Graph implements Drawable {
 
     /** Display text information on the graph */
     private NotificationArea notify;
-    
+
     /** How clear the plots will be. Smaller is clearer */
     private int plotResolution;
-    
+
     /** Default window size */
     private GraphWindow defaultWindow;
-    
-    public Graph(DrawPanel owner) {
+
+    public Graph() {
+        super();
         plotResolution = 8;
         smallFont = new Font("Monospaced", Font.PLAIN, 10);
         mediumFont = new Font("Monospaced", Font.PLAIN, 14);
@@ -101,8 +109,6 @@ public class Graph implements Drawable {
         shapes = new ArrayList<Shape>();
         clearPlots();
 
-        this.owner = owner;
-
         lines = new ArrayList<Line>();
 
         notify = new NotificationArea(new PointD(0, 0), smallFont, new Color(
@@ -118,6 +124,11 @@ public class Graph implements Drawable {
         hitboxes.createBox(new Rectangle(705, 32, 10, 10), "right");
         hitboxes.createBox(new Rectangle(694, 21, 10, 10), "up");
         hitboxes.createBox(new Rectangle(694, 43, 10, 10), "down");
+
+        // this.setDoubleBuffered(true);
+        this.setBackground(Color.WHITE);
+        this.addMouseListener(this);
+        this.addMouseMotionListener(this);
     }
 
     /**
@@ -126,11 +137,11 @@ public class Graph implements Drawable {
     public void setDefaultWindow(GraphWindow wind) {
         defaultWindow = wind;
     }
-    
+
     public void defaultWindow() {
         setWindow(defaultWindow);
     }
-    
+
     public void setPlotResolution(int newish) {
         plotResolution = newish;
         replotAll();
@@ -143,7 +154,7 @@ public class Graph implements Drawable {
         clearPoints();
         setNotification("");
     }
-    
+
     public void clearLines() {
         lines.clear();
     }
@@ -165,26 +176,30 @@ public class Graph implements Drawable {
     public void addShape(Shape shape) {
         shapes.add(shape);
     }
-    
+
     public void clearShapes() {
         shapes.clear();
     }
-    
+
     private void drawShapes(Graphics g) {
-        for(int i = 0; i < shapes.size(); i++) {
+        for (int i = 0; i < shapes.size(); i++) {
             shapes.get(i).draw(g, window);
         }
     }
-    
+
     private void clearPlots() {
         plots = new ArrayList<Image>();
     }
 
     /**
-     * Force the parent to repaint as soon as possible
+     * Force a repaint from a non-Swing thread
      */
     public void scheduleRepaint() {
-        owner.scheduleRepaint();
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                repaint();
+            }
+        });
     }
 
     public void addPlot(Function f, Color color) {
@@ -200,8 +215,8 @@ public class Graph implements Drawable {
     private void replotAll() {
         clearPlots();
         for (int i = 0; i < functions.size(); i++) {
-            plots.add(PlotFunction.plotFunction(functions.get(i), window, plotResolution,
-                    Color.BLACK));
+            plots.add(PlotFunction.plotFunction(functions.get(i), window,
+                    plotResolution, Color.BLACK));
         }
     }
 
@@ -212,13 +227,20 @@ public class Graph implements Drawable {
         clearPlots();
         window = newWindow;
         replotAll();
-        owner.scheduleRepaint();
+        scheduleRepaint();
     }
 
-    public void draw(Graphics g, int width, int height) {
+    public void paint(Graphics g) {
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, getSize().width, getSize().height);
         if (window == null) {
             return;
         }
+
+        window.pixHeight = getSize().height;
+        window.pixWidth = getSize().width;
+        window.rescale();
+
         g.setColor(Color.WHITE);
 
         for (int i = 0; i < plots.size(); i++) {
@@ -336,12 +358,16 @@ public class Graph implements Drawable {
         zoomBoxMode = true;
     }
 
-    public void mouseMoved(int x, int y, int width, int height) {
-        mouseX = x;
-        mouseY = y;
+    public void mouseMoved(MouseEvent event) {
+        mouseX = event.getX();
+        mouseY = event.getY();
+        repaint();
     }
 
-    public void mouseClicked(int x, int y, int button) {
+    public void mouseClicked(MouseEvent event) {
+        int x = event.getX();
+        int y = event.getY();
+        int button = event.getButton();
         if (button == 1) {
             if (!zoomBoxMode) {
                 hitboxes.checkBoxes(x, y);
@@ -362,6 +388,22 @@ public class Graph implements Drawable {
                 }
             }
         }
+    }
+
+    public void mouseEntered(MouseEvent arg0) {
+
+    }
+
+    public void mouseExited(MouseEvent arg0) {
+
+    }
+
+    public void mousePressed(MouseEvent arg0) {
+
+    }
+
+    public void mouseReleased(MouseEvent arg0) {
+
     }
 
     /**
@@ -412,5 +454,15 @@ public class Graph implements Drawable {
 
         window.rescale();
         setWindow(window);
+    }
+
+    public void mouseDragged(MouseEvent arg0) {
+    }
+
+    public void actionPerformed(ActionEvent arg0) {
+        if (arg0.getActionCommand().equals("EXTERMINATE")) {
+            clearAll();
+        }
+        repaint();
     }
 }

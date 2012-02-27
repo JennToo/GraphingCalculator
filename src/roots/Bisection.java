@@ -67,7 +67,7 @@ public class Bisection {
                 g.setNotification("Xl: " + (float) low + "\nf(Xl): "
                         + (float) fl + "\nXh: " + (float) high + "\nf(Xh): "
                         + (float) fh + "\nXr: " + (float) xr + "\nf(Xr): "
-                        + (float) fxr);
+                        + (float) fxr + "\nEa: " + (float)es);
 
                 PointD pLow = new PointD(low, fl);
                 PointD pHigh = new PointD(high, fh);

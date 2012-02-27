@@ -42,14 +42,14 @@ public class ModifiedSecant {
             g.addPlot(f, Color.BLACK);
         }
 
-        //The max iterations
+        // The max iterations
         int oMax = max;
-        
+
         double[] arg = new double[1];
-        
+
         double prev = point;
         double xr = point;
-        
+
         double ea = stop * 1.1;
         double fxr = 0.0;
         while (ea > stop && max > 0) {
@@ -64,6 +64,10 @@ public class ModifiedSecant {
 
                 PointD old1 = new PointD(prev, fxr);
                 PointD old2 = new PointD(0, slope * (0 - prev) + fxr);
+
+                g.setNotification("X: " + (float) old1.x + "\nf(X1): "
+                        + (float) old1.y + "\nXr: " + (float) xr + "\nEa: "
+                        + (float) ea);
 
                 PointD new1 = new PointD(xr, 0);
 

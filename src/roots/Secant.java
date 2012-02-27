@@ -59,6 +59,11 @@ public class Secant {
                 g.clearPoints();
                 g.clearLines();
                 
+                g.setNotification("X1: " + (float) p1 + "\nf(X1): "
+                        + (float) fp1 + "\nX2: " + (float) p2
+                        + "\nf(X2): " + (float) fp2 + "\nXr: " + (float) xr
+                        + "\nEa: " + (float) ea);
+                
                 PointD pd1 = new PointD(p1, fp1);
                 PointD pd2 = new PointD(p2, fp2);
                 PointD pdxr = new PointD(xr, fxr);

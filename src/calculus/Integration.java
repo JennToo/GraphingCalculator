@@ -21,9 +21,6 @@ package calculus;
 import java.awt.Color;
 import java.util.ArrayList;
 
-import matrix.Matrix;
-import matrix.MatrixFactory;
-
 import functions.Function;
 import functions.FunctionArguments;
 import gui.Graph;
@@ -60,6 +57,11 @@ public class Integration {
         double h = (b - a) / n;
         double xn = a;
         double arg[] = new double[1];
+        
+        if(g != null) {
+            g.setNotification("a: " + (float)a + "\nb: " + (float)b + "\nn:" + n);
+        }
+        
         while (xn <= b) {
             arg[0] = xn + h / 2;
             double eval = f.evaluate(new FunctionArguments(arg));
@@ -101,6 +103,10 @@ public class Integration {
             g.addPlot(f, Color.BLACK);
         }
 
+        if(g != null) {
+            g.setNotification("a: " + (float)a + "\nb: " + (float)b + "\nn:" + n);
+        }
+        
         double sum = 0.0;
         double h = (b - a) / n;
         double arg[] = new double[1];

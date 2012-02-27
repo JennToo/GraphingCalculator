@@ -32,7 +32,7 @@ public class Parameters {
     public void defaults() {
         params.put("ModifiedSecantStep", 0.0001);
         params.put("MaxIterations", 100.0);
-        params.put("StoppingThreshold", 0.00001);
+        params.put("StoppingThreshold", 0.0001);
         params.put("PlotResolution", 12.0);
         params.put("Xmin", -10.0);
         params.put("Xmax", 10.0);

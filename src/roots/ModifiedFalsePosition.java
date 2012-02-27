@@ -33,8 +33,8 @@ public class ModifiedFalsePosition {
      * Implements the standard false-position root finding algorithm
      */
     @SuppressWarnings("deprecation")
-    public static RootFindResults zeroModifiedFalsePosition(Function f, double high,
-            double low, double stop, int max, Graph g) {
+    public static RootFindResults zeroModifiedFalsePosition(Function f,
+            double high, double low, double stop, int max, Graph g) {
         int oMax = max;
         double[] arg = new double[1];
 
@@ -55,7 +55,7 @@ public class ModifiedFalsePosition {
         double es = stop * 1.1;
         double xr = Double.NaN;
         double fxr = 0.0;
-        
+
         // Keeps the sides balanced
         int balance = 0;
         while (max > 0 && es > stop) {
@@ -67,16 +67,21 @@ public class ModifiedFalsePosition {
                 g.clearPoints();
                 g.clearLines();
 
+                g.setNotification("Xl: " + (float) low + "\nf(Xl): "
+                        + (float) fl + "\nXh: " + (float) high + "\nf(Xh): "
+                        + (float) fh + "\nXr: " + (float) xr + "\nf(Xr): "
+                        + (float) fxr + "\nEa: " + (float) es + "\nBalance: "
+                        + balance);
+
                 PointD pLow = new PointD(low, fl);
                 PointD pHigh = new PointD(high, fh);
                 PointD pXr = new PointD(xr, fxr);
                 PointD Xr = new PointD(xr, 0);
-                
+
                 g.addPoint(new LabeledPoint(pLow, "(Xl, f(Xl))", Color.BLUE));
                 g.addPoint(new LabeledPoint(pHigh, "(Xh, f(Xh))", Color.BLUE));
                 g.addPoint(new LabeledPoint(pXr, "(Xr, f(Xr))", Color.ORANGE));
 
-                
                 g.addLine(new LineSegment(pXr, Xr, Color.ORANGE));
                 g.addLine(new Line(pLow, pHigh, Color.BLUE));
                 g.scheduleRepaint();
@@ -104,15 +109,15 @@ public class ModifiedFalsePosition {
                     balance--;
                 }
             }
-            
-            if(balance >= 2) {
+
+            if (balance >= 2) {
                 fl = fl / 2.0;
                 balance = 0;
-            } else if(balance <= -2) {
+            } else if (balance <= -2) {
                 fh = fh / 2.0;
                 balance = 0;
             }
-            
+
             es = Math.abs((prev - xr) / xr);
             prev = xr;
             max--;

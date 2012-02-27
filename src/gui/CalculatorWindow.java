@@ -68,7 +68,6 @@ public class CalculatorWindow {
     private JLabel input2Label;
     private JLabel input3Label;
     private JLabel input4Label;
-    private DrawPanel drawP;
     private JButton btnEvaluate;
     private JButton btnClearConsole;
     private JButton btnOptions;
@@ -179,7 +178,7 @@ public class CalculatorWindow {
         btnEvaluate.setBounds(637, 63, 98, 20);
         frame.getContentPane().add(btnEvaluate);
 
-        btnClearConsole = new JButton("Clear Console");
+        btnClearConsole = new JButton("Clear");
         btnClearConsole.setBounds(516, 63, 117, 20);
         frame.getContentPane().add(btnClearConsole);
 
@@ -223,13 +222,13 @@ public class CalculatorWindow {
         optionFrame = new Options(this);
 
         frame.setTitle("Graphing Calculator");
-        drawP = new DrawPanel();
-        graph = new Graph(drawP);
-        drawP.add(graph);
+        graph = new Graph();
 
         graphPanel.setLayout(new BorderLayout(0, 0));
-        graphPanel.add(drawP, BorderLayout.CENTER);
-        btnEvaluate.addActionListener(drawP);
+        graphPanel.add(graph, BorderLayout.CENTER);
+        btnEvaluate.addActionListener(graph);
+        btnContinue.addActionListener(graph);
+        btnClearConsole.addActionListener(graph);
 
         populateActionBox();
         disableInputs();
@@ -237,8 +236,9 @@ public class CalculatorWindow {
         attachListener();
         clearOutput();
         displayOutput("Initialized\n");
-        graph.setDefaultWindow(new GraphWindow(-10.0, 10.0, -10.0, 10.0, drawP
-                .getSize().width, drawP.getSize().height));
+        graph.setDefaultWindow(new GraphWindow(-10.0, 10.0, -10.0, 10.0, 719,
+                436));
+        graph.defaultWindow();
     }
 
     /**
@@ -323,11 +323,10 @@ public class CalculatorWindow {
         graph.setPlotResolution((int) optionFrame.getParam("PlotResolution"));
         GraphWindow gw = new GraphWindow(optionFrame.getParam("Xmin"),
                 optionFrame.getParam("Xmax"), optionFrame.getParam("Ymin"),
-                optionFrame.getParam("Ymax"), drawP.getWidth(),
-                drawP.getHeight());
+                optionFrame.getParam("Ymax"), graph.getWidth(),
+                graph.getHeight());
         graph.setDefaultWindow(gw);
         graph.scheduleRepaint();
-
     }
 
     private class CalculatorWindowListener implements ActionListener {
@@ -406,19 +405,23 @@ public class CalculatorWindow {
                 if (meth.equals("Midpoint")) {
                     val = Integration.midpointRectangle(f,
                             Double.parseDouble(input3Box.getText()),
-                            Double.parseDouble(input4Box.getText()), 20, graph);
+                            Double.parseDouble(input4Box.getText()),
+                            (int) optionFrame.getParam("Division"), graph);
                 } else if (meth.equals("Trapezoid")) {
                     val = Integration.trapezoidRule(f,
                             Double.parseDouble(input3Box.getText()),
-                            Double.parseDouble(input4Box.getText()), 20, graph);
+                            Double.parseDouble(input4Box.getText()),
+                            (int) optionFrame.getParam("Division"), graph);
                 } else if (meth.equals("Romberg")) {
                     val = Integration.rombergsRule(f,
                             Double.parseDouble(input3Box.getText()),
-                            Double.parseDouble(input4Box.getText()), 5);
+                            Double.parseDouble(input4Box.getText()),
+                            (int) optionFrame.getParam("Romberg"));
                 } else if (meth.equals("Simpson")) {
                     val = Integration.simpsonsRule(f,
                             Double.parseDouble(input3Box.getText()),
-                            Double.parseDouble(input4Box.getText()), 20);
+                            Double.parseDouble(input4Box.getText()),
+                            (int) optionFrame.getParam("Division"));
                 }
 
                 displayOutput("Integral: " + val + "\n");
@@ -439,13 +442,16 @@ public class CalculatorWindow {
                 String meth = (String) input1Box.getSelectedItem();
                 if (meth.equals("Forward Diff.")) {
                     diff = Derivatives.forwardDifference(f,
-                            Double.parseDouble(input3Box.getText()), 0.001);
+                            Double.parseDouble(input3Box.getText()),
+                            optionFrame.getParam("DerivStep"));
                 } else if (meth.equals("Backward Diff.")) {
                     diff = Derivatives.backwardDifference(f,
-                            Double.parseDouble(input3Box.getText()), 0.001);
+                            Double.parseDouble(input3Box.getText()),
+                            optionFrame.getParam("DerivStep"));
                 } else if (meth.equals("Centered Diff.")) {
                     diff = Derivatives.centeredDifference(f,
-                            Double.parseDouble(input3Box.getText()), 0.001);
+                            Double.parseDouble(input3Box.getText()),
+                            optionFrame.getParam("DerivStep"));
                 }
                 displayOutput("Derivative: " + diff + "\n");
             } catch (MalformedFunctionException e) {
@@ -599,25 +605,38 @@ public class CalculatorWindow {
                     if (method.equals("Bisection")) {
                         t = new BisectionThread(f, Double.parseDouble(input3Box
                                 .getText()), Double.parseDouble(input2Box
-                                .getText()), 0.001, 100, graph);
+                                .getText()),
+                                optionFrame.getParam("StoppingThreshold"),
+                                (int) optionFrame.getParam("MaxIterations"),
+                                graph);
                     } else if (method.equals("False Position")) {
                         t = new FalsePositionThread(f,
                                 Double.parseDouble(input3Box.getText()),
-                                Double.parseDouble(input2Box.getText()), 0.001,
-                                100, graph);
+                                Double.parseDouble(input2Box.getText()),
+                                optionFrame.getParam("StoppingThreshold"),
+                                (int) optionFrame.getParam("MaxIterations"),
+                                graph);
                     } else if (method.equals("Secant")) {
                         t = new SecantThread(f, Double.parseDouble(input3Box
                                 .getText()), Double.parseDouble(input2Box
-                                .getText()), 0.001, 100, graph);
+                                .getText()),
+                                optionFrame.getParam("StoppingThreshold"),
+                                (int) optionFrame.getParam("MaxIterations"),
+                                graph);
                     } else if (method.equals("Modified Secant")) {
                         t = new ModifiedSecantThread(f,
-                                Double.parseDouble(input2Box.getText()), 0.001,
-                                0.001, 100, graph);
+                                Double.parseDouble(input2Box.getText()),
+                                optionFrame.getParam("ModifiedSecantStep"),
+                                optionFrame.getParam("StoppingThreshold"),
+                                (int) optionFrame.getParam("MaxIterations"),
+                                graph);
                     } else if (method.equals("Modified F.P.")) {
                         t = new ModifiedFalsePositionThread(f,
                                 Double.parseDouble(input3Box.getText()),
-                                Double.parseDouble(input2Box.getText()), 0.001,
-                                100, graph);
+                                Double.parseDouble(input2Box.getText()),
+                                optionFrame.getParam("StoppingThreshold"),
+                                (int) optionFrame.getParam("MaxIterations"),
+                                graph);
                     }
                     displayOutput("Method: " + method + "\n");
                 } catch (NumberFormatException e) {

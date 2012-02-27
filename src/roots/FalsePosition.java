@@ -64,6 +64,11 @@ public class FalsePosition {
                 g.clearPoints();
                 g.clearLines();
 
+                g.setNotification("Xl: " + (float) low + "\nf(Xl): "
+                        + (float) fl + "\nXh: " + (float) high + "\nf(Xh): "
+                        + (float) fh + "\nXr: " + (float) xr + "\nf(Xr): "
+                        + (float) fxr + "\nEa: " + (float)es);
+                
                 PointD pLow = new PointD(low, fl);
                 PointD pHigh = new PointD(high, fh);
                 PointD pXr = new PointD(xr, fxr);

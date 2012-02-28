@@ -30,11 +30,16 @@ import javax.swing.JTabbedPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.BoxLayout;
+import javax.swing.UIManager;
+import java.awt.Font;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+import javax.swing.plaf.nimbus.*;
+import javax.swing.*;
+import java.awt.*;
 
 import javax.swing.JScrollPane;
 
@@ -92,8 +97,22 @@ public class CalculatorWindow {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
+		    
+		    UIManager.setLookAndFeel(new NimbusLookAndFeel() {
+			    
+			    @Override
+				public UIDefaults getDefaults() {
+				UIDefaults ret = super.getDefaults();
+				ret.put("defaultFont",
+					new Font(Font.SANS_SERIF, 0, 10));
+				return ret;
+			    }
+			    
+			});
+
                     CalculatorWindow window = new CalculatorWindow();
                     window.frame.setVisible(true);
+		    
                 } catch (Exception e) {
                     e.printStackTrace();
                     System.out.println("Crashed");

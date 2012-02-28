@@ -55,7 +55,7 @@ public class Options extends JFrame implements ActionListener {
         setResizable(false);
         setTitle("Options");
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        setBounds(100, 100, 277, 424);
+        setBounds(100, 100, 277, 464);
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         setContentPane(contentPane);
